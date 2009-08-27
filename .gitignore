@@ -1,0 +1,9 @@
+*.sqlite3
+*.log
+.DS_Store
+tmp
+nbproject/*
+*.todo
+.idea
+doc
+*.tmproj
