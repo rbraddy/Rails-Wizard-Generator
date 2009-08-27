@@ -1,0 +1,6 @@
+<select onchange="Jump(this)">
+  <option value="-1"></option>
+  <%attributes.each do |key,v|%>
+  <option value="<%=url_for(:action=>key)-%>"><%=v%></option>
+  <%end%>
+</select>

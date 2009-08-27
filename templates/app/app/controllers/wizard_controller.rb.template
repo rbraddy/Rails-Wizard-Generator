@@ -1,0 +1,62 @@
+# <%=wizard.title%>
+class Wizard<%=wizard.class_name%>Controller < ApplicationController
+  def index
+    clean_session
+    <%=wizard.first_step.underscored_name%>
+    render :action=>:<%=wizard.first_step.underscored_name%>
+  end
+<%wizard.steps.each_with_index do |step,index|%>
+  def <%=step.underscored_name%>    
+  <% if step.object %>
+    @<%=step.object.underscore%> = session[:<%=wizard.underscored_name%>][:<%=step.object.underscore%>].nil? ? <%=step.object%>.new : <%=step.object%>.new(session[:<%=wizard.underscored_name%>][:<%=step.object.underscore%>])   
+  <%end%>
+    @is_last = <%=step.underscored_name == wizard.last_step.underscored_name%>
+    if request.post?
+    <% if step.object %>
+      @<%=step.object.underscore%> = <%=step.object%>.new params[:<%=step.object.underscore%>]
+      @<%=step.object.underscore%>.valid? 
+      fields = %w{ <%=step.object_control_names.join(' ') %>}
+     valid = !has_errors?(fields,@<%=step.object.underscore%>.errors)                  
+#      valid = !fields.any? {|att| @<%=step.object.underscore%>.errors.on(att) }      
+      parse_errors(fields,@<%=step.object.underscore%>.errors)
+      if valid
+        session[:<%=wizard.underscored_name%>][:<%=step.object.underscore%>] ||= {}
+        <%unless step.file_controls.empty?%>
+          #upload
+          <%step.file_controls.each do |c|%>
+            file_name = upload('<%=wizard.underscored_name%>',params[:<%=step.object.underscore%>][:<%=c.name%>]);
+            params[:<%=step.object.underscore%>][:<%=c.name%>] = file_name
+          <%end%>
+        <%end%>
+        session[:<%=wizard.underscored_name%>][:<%=step.object.underscore%>].merge!(params[:<%=step.object.underscore%>])
+
+        if params[:finish]
+          finish_action
+        else
+          redirect_to :action=>:<%=wizard.steps[index+1].underscored_name%>
+        end
+      end
+    <%elsif(wizard.steps[index+1])%>
+      redirect_to :action=>:<%=wizard.steps[index+1].underscored_name%>
+    <%end%>
+    end
+  end
+<%end%>
+
+  def finish_action
+  session[:<%=wizard.underscored_name%>].each do |key,value|
+    hsh = value
+    obj = nil
+    eval("obj = #{key.to_s.classify}.new(hsh)")
+    obj.save!  
+  end
+
+    flash[:notice] = "Thanks"
+    redirect_to :controller=>'page'    
+  end
+  
+private
+  def clean_session
+    session[:<%=wizard.underscored_name%>] = {}  
+  end
+end

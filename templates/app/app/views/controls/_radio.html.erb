@@ -1,0 +1,6 @@
+<div>
+  <label><%=label%></label>
+  <% value.split(',').each do |v|%>
+  <%=form.radio_button name,v%><%=v%>
+  <%end%>
+</div>

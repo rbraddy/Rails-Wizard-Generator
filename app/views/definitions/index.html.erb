@@ -1,0 +1,18 @@
+<h3>Files:</h3>
+<table border="0" cellspacing="5" cellpadding="5">
+  <tr><th>File</th><th></th></tr>
+
+    <% for file in @xmls %>
+  <tr><td><%=file.delete('.xml')%></td><td>
+  <span id="link_<%=file.delete('.xml').parameterize-%>"><%=link_to('generate', {:controller=>'definitions',:action=>'generate',:id=>file.delete('.xml')}, {:onclick=>"progress('link_#{file.delete('.xml').parameterize}')"})%></td></tr>      
+    <% end %>
+  
+
+</table>
+
+<script type="text/javascript" charset="utf-8">
+  function progress(id)
+  {
+    document.getElementById(id).innerHTML = 'Generating... Please wait';
+  }
+</script>

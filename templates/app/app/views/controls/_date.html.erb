@@ -1,0 +1,14 @@
+<div>
+  <label><%=label%></label>
+  <%
+  params = {}
+  params[:start_year] = attributes['start_year'] if attributes['start_year']
+  params[:end_year] = attributes['end_year'] if attributes['end_year']
+  params[:discard_day] = attributes['discard_day'] if attributes['discard_day']
+  params[:discard_month] = attributes['discard_month'] if attributes['discard_month']
+  params[:discard_year] = attributes['discard_year'] if attributes['discard_year']
+  params[:default] = attributes['default'] if attributes['default']
+  params[:order] = attributes['order'] if attributes['order']
+  %>
+  <%=form.date_select name,params, attributes%>
+</div>

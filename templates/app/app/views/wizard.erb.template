@@ -1,0 +1,56 @@
+<% content_for :page_title do %>{{ step.title }}<% end %>
+
+<h1>Step {{ step.seq+1 }} from {{ wizard.steps.size }}</h1>
+<h2>{{ step.title }}</h2>
+{% if step.image %}
+  <%=image_tag '{{ step.image_path }}' %>
+{% endif %}
+{% if step.help_link %}
+  <br/><a href="/{{ step.help_link }}" target="blank">help</a>
+{% endif %}
+{% if step.object %}
+<%remote_form_for @{{ step.underscored_object }}, :url=>{:action=>"{{ step.underscored_name }}"},:html=>{:multipart => true} do |form| %>
+<!-- errors -->
+<%= form.error_messages %>
+<!-- /errors -->
+  {% for control in step.controls %}
+    {% if control.object %}
+      <!-- #controls for nested objects -->
+      <%@{{ step.underscored_object }}.build_{{ control.underscored_object }} if @{{ step.underscored_object }}.{{ control.underscored_object }}.nil? %>
+      <% form.fields_for :{{ control.underscored_object}},@{{ step.underscored_object }}.{{ control.underscored_object }} do |ff| %>
+      <%=render :partial=>'/controls/{{ control.type }}',:locals=>{:label=>'{{ control.label }}',:name=>'{{ control.name }}',:value=>'{{ control.values }}',:attributes=>{ {{ control.mapped_attributes }} } {{ control.datasource_for_render}},:form=>ff}%>
+      <% end %>    
+    {% else %}
+      <!-- #form controls -->
+      <%=render :partial=>'/controls/{{ control.type }}',:locals=>{:label=>'{{ control.label }}',:name=>'{{ control.name }}',:value=>'{{ control.values }}',:attributes=>{ {{ control.mapped_attributes }} } {{ control.datasource_for_render}},:form=>form}%>
+    {% endif %}
+  {% endfor %}
+  
+  <div>
+    {% if step.first_step? == false %}
+    <input type="button" onclick="location='<%=url_for :action=>'{{ step.prev_step.underscored_name }}'%>'" value="<<Back"/>
+    {% endif %}
+    {% if step.last_step? == false %}
+      <input type="submit" value="Next>>"/>
+    {% else %}
+        <input type="submit" value="Finish"  name="finish"/>
+    {% endif %}
+    {% if step.has_finish_button?  == true %}
+      <input type="submit" value="Finish" name="finish"/>
+    {% endif %}
+  </div>
+<%end%>
+{% else %}
+  {% if step.first_step? == false %}
+  <input type="button" onclick="location='<%=url_for :action=>'{{step.prev_step.underscored_name}}'%>'" value="<<Back"/>
+  {% endif %}
+  {% if step.last_step? == false %}
+    <input type="button" value="Next>>" onclick="location='<%=url_for :action=>'{{step.next_step.underscored_name}}'%>'"/>
+  {% else %}
+    <input type="button" value="Finish" onclick="location='<%=url_for :action=>'finish_action'%>'"/>  
+  {% endif %}
+  {% if step.has_finish_button? == true %}
+    <input type="button" value="Finish" onclick="location='<%=url_for :action=>'finish_action'%>'"/>
+  {% endif %}
+
+{% endif %}

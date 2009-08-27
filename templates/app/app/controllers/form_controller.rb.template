@@ -1,0 +1,59 @@
+# <%=form.title%>
+class Form<%=form.class_name%>Controller < ApplicationController
+
+  def add    
+  <% if form.object %>
+    @<%=form.object.underscore%> = <%=form.object%>.new params[:<%=form.object.underscore%>]   
+    
+    if request.post?    
+      valid = validate_now
+      if valid   
+        upload_files
+        @<%=form.object.underscore%>.save(false)
+        flash[:notice] = "Form saved successfully"
+        redirect_to '/'  and return
+      end
+    end
+  <%end%>    
+  render :action=>'form'
+  end
+  
+  def edit    
+  @edit = true
+  <% if form.object %>
+    @<%=form.object.underscore%> = <%=form.object%>.find(params[:id])
+    if request.post?    
+      @<%=form.object.underscore%>.attributes = params[:<%=form.object.underscore%>]       
+      valid = validate_now
+      if valid   
+        upload_files
+        @<%=form.object.underscore%>.save(false)
+        flash[:notice] = "Form updated successfully"
+        redirect_to '/' and return
+      end
+    end
+  <%end%>    
+  render :action=>'form'
+  end
+
+private
+def upload_files
+<%unless form.file_controls.empty?%>
+  #upload
+  <%form.file_controls.each do |c|%>
+    file_name = upload('<%=form.underscored_name%>',params[:<%=form.object.underscore%>][:<%=c.name%>]);
+    @<%=form.object.underscore%>.<%=c.name%> = file_name
+  <%end%>
+<%end%>
+end
+
+
+def validate_now
+  @<%=form.object.underscore%>.valid? 
+  fields = %w{ <%=form.object_control_names.join(' ') %>}
+  valid = !has_errors?(fields,@<%=form.object.underscore%>.errors)                  
+  parse_errors(fields,@<%=form.object.underscore%>.errors)
+  return valid
+end
+
+end

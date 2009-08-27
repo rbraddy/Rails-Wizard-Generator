@@ -1,0 +1,34 @@
+<% content_for :page_title do %>{{ form.title }}<% end %>
+
+<h2>{{ form.title }}</h2>
+
+{% if form.object %}
+
+<% form_for @{{ form.underscored_object }},:url=>{:action=>(@edit ? 'edit' : 'add'),:id=>(@edit ? params[:id] : nil)},:html=>{:multipart => true,:method=>:post} do |form| %>
+
+<!-- errors -->
+<%= form.error_messages %>
+
+<!-- controls -->
+  {% for control in form.controls %}
+    {% if control.object %}
+      <!-- #controls for nested objects -->
+      <%@{{ form.underscored_object }}.build_{{ control.underscored_object }} if @{{ form.underscored_object }}.{{ control.underscored_object }}.nil?%>
+      <% form.fields_for :{{ control.underscored_object}},@{{ form.underscored_object }}.{{ control.underscored_object }} do |ff| %>
+      <%=render :partial=>'/controls/{{ control.type }}',:locals=>{:label=>'{{ control.label }}',:name=>'{{ control.name }}',:value=>'{{ control.values }}',:attributes=>{ {{ control.mapped_attributes }} } {{ control.datasource_for_render}},:form=>ff}%>
+      <% end %>    
+    {% else %}
+      <!-- #form controls -->
+      <%=render :partial=>'/controls/{{ control.type }}',:locals=>{:label=>'{{ control.label }}',:name=>'{{ control.name }}',:value=>'{{ control.values }}',:attributes=>{ {{ control.mapped_attributes }} } {{ control.datasource_for_render}},:form=>form}%>
+    {% endif %}
+  {% endfor %}
+    
+  <input type="button" value="Back" onclick="location='/'"/>
+  <input type="submit" value="Save"  name="finish"/>
+  
+    
+<%end%>
+{% else %}
+
+
+{% endif %}

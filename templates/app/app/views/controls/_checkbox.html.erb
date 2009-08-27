@@ -1,0 +1,9 @@
+<%
+if value=='true'
+  attributes.merge!({'checked'=>'true'})
+end  
+%>
+<div>
+  <label><%=label%></label>
+  <%=form.check_box name, attributes%>
+</div>

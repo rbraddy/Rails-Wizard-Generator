@@ -1,0 +1,23 @@
+class Create<%=obj.class_name.pluralize%> < ActiveRecord::Migration
+  def self.up
+    create_table "<%=obj.class_name.tableize%>", :force => true do |t|
+    <%obj.fields.each do |field|%>
+      t.<%=field.type%> :<%=field.name%><%=",#{field.separated_params.join(',')}" unless field.separated_params.empty?%> 
+    <%end%>      
+    <%obj.relationships.each do |rel|%>
+      <%if rel.type =='belongs_to'%>
+      t.<%=rel.type %> :<%=rel.name %>
+      <%end%>
+    <%end%>    
+    end
+
+    <%obj.predefined_rows.each do |row|%>
+      <%=obj.class_name%>.create!({<%=row.map{|k,v| ":#{k} => '#{v}'"}.join(',')%>})
+    <%end%>    
+    
+  end
+
+  def self.down
+    drop_table "<%=obj.class_name.tableize%>"
+  end
+end

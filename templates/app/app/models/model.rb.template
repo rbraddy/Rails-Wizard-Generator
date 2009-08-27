@@ -1,0 +1,13 @@
+# <%=obj.class_desc%>
+class <%=obj.class_name%> < ActiveRecord::Base
+#relationships
+<%obj.relationships.each do |rel|%>
+  <%=rel.type %> :<%=rel.name %>, :class_name => '<%=rel.class_name %>'
+  accepts_nested_attributes_for :<%=rel.name %>
+  #attr_accessible :<%=rel.name %>_attributes  
+<%end%>
+#validators
+<%obj.parsed_validators.each do |v|%>
+  validates_<%=v.type %> <%=v.separated_fields%> <%=",#{v.separated_params.join(',')}" unless v.separated_params.empty?%> 
+<%end%>
+end

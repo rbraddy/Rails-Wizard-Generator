@@ -1,0 +1,13 @@
+<div>
+  <label><%=label%></label>
+  <%=form.text_field name, :id=>name%><%=image_tag 'calendar_icn',:id=>'calendarButton'%>
+</div>
+
+<script type="text/javascript">
+      window.onload = function() {
+        Calendar.setup({
+          dateField      : '<%=name-%>',
+          triggerElement : 'calendarButton'
+        })
+      }
+</script>

@@ -1,0 +1,389 @@
+Rails Wizard Generator
+======================
+
+The Rails Wizard Generator is a Rails application generator that creates Rails applications based upon an XML application specification.  It can be used to:
+
+ - Generate a functioning Rails application containing user-specified forms and wizards
+
+ - Generate an integrated set of Rails models, DB schema and controllers (without any wizard or form views), including support for ActiveRecord relationships between objects.
+
+In particular, the generator creates:
+
+ 1) Rails MVC components (models, views and controllers) as an alternative to traditional Rails scaffolding. Unlike Rails scaffolding, it is possible to specify complete objects, along with relationships between multiple objects, and then generate a complete set of Rails MVC framework componentry in a single step.  Each object's attribute (column) can also contain range validation specifications.
+
+ 2) Wizard views - the generator creates a set of wizards as RHTML view files, and supports a full range of form field types.
+
+ 3) Form views - the generator creates a set of HTML forms as RHTML view files, and supports a full rnage of form field types.
+
+The generator may also be used simply to generate a complex set of Rails models and controllers, along with an integrated schema.
+
+The generators takes as input an XML-based "specification" file, then generates the Rails application, objects, wizards and forms based upon these specifications.
+
+
+The following wizard and form fields are supported:
+
+	images
+	textfield - rails text_field
+	textarea - rails text_area
+	password -  rails password
+	select
+	checkbox
+	radio
+	file
+	date - rails date 
+	calendar - javascript calendar button
+	richtext - javascript-based control for formated text
+	actions - links for move to other steps
+
+
+The generated wizard and forms-based application can be customized with your own CSS templates.  The generator uses the Liquid Template engine.
+
+ 
+Installation
+============
+ 
+- Copy this application to your Rails development environment
+
+$ git clone git://github.com/rbraddy/Rails-Wizard-Generator.git
+
+$ cd generator (directory where generator was installed)
+
+- Edit the config/database.yml to use MySQL or SqlLite (as appropriate for your environment)
+
+$ cd config
+$ vi database.yml  (use your favorite editor here)
+$ rake gems:install
+
+- Create your application's XML specification
+
+$ cd ../defs
+
+$ cp test.xml myapp.xml
+
+$ vi myapp.xml  (modify app definition as appropriate)
+
+- Run the Rails Wizard Generator application using Rails server
+
+$ cd .. (to your generator app directory)
+
+$ ruby script/server  (run the Rails server)
+
+- From Web browser, generate the application
+
+Click the "generate" link
+(wait while generation takes place...)
+
+Your generated application is now located in the directory:
+
+.../generator/output/myapp
+
+Please note that a complete Rails application has been generated, including database schema and live database tables, along with all required Rails MVC framework components for this application.
+
+- Test your newly-generated application
+
+(stop the Rails server)
+
+$ cd output/myapp       (your generated application directory)
+
+(optional - edit the config/database.yml file for your DB)
+
+$ rake db:migrate
+
+$ ruby script/server    (start up your new Rails application)
+
+Connect with web browser to your new Rails application
+
+
+The Rails application that is generated can then be further customized in whatever way you choose.  For example, you probably want to add your own CSS style and layout that creates a more appropriate appearance than the generic HTML look of the generated app.
+
+You may also use the Rails Wizard Generator to create a holistic set of integrated Rails models and controllers (without the wizard or form views), along with a corresponding database schema that will be incorporated into some other, existing application (vs. using traditional Rails scaffolding).
+
+
+Generator Description and Instructions
+=======================================
+
+To generate project you need create a definition file in /defs directory (see the example test.xml in /defs directory)
+
+To customize project, create directory in /templates/{appdir} and copy from /templates/app
+
+/templates/app/views/controls -> /templates/{appdir}/views/controls
+/templates/app/layouts/application.html.erb -> /templates/{appdir}/views/layouts/application.html.erb
+
+Place custom images in /templates/{appdir}/images
+create/change css application.css in  /templates/{appdir}/stylesheets/application.css
+
+For custom form and wizard templates copy
+/templates/app/views/form.erb.template -> /templates/{appdir}/views/form.erb.template
+/templates/app/views/wizard.erb.template -> /templates/{appdir}/views/wizard.erb.template
+
+Template language based on liquid template engine (see http://wiki.github.com/tobi/liquid/liquid-for-designers) 
+
+It's a simple template engine for easier template understanding and editing.
+
+Run generator web application(run: script/server) and when go to http://localhost:3000/ you will see list of current xml definition files or run rake task which generate all projects(run: rake generator:run)
+
+projects will be generated in output directory
+
+Last step is deploy project to server and after change config.database.yml db data according server db settings, run rake db:migrate for create and populate db tables
+
+
+Xml definitions:
+=================
+objects.relationships:
+All rails associations supported: belongs_to,has_one,has_many. class attribute is class param for association
+
+objects.fields:
+Name is field name in db and type is any rails migration types(string,text,date,datetime,boolean etc)
+field.params is params for migration, as :limit,:default,:null
+
+objects.validators:
+Type is rails validation method name without validate_ as "presence_of" will generated to "validate_presence_of", also there are addition validations as email format and phone format "format_of_phone","format_of_email"
+
+Fields is comma separated list of fields for validation
+validator.params: some rails validation methods required additional params as maximum or within for validate_length_of
+
+objects.data:
+If predefined data required for some objects then it can be defined in data, see object Country definition
+
+wizard.wizard-step
+Name is name of step(required)
+object defines which object will be used in form(form_for rails)
+object can be overwriten for control by object which in relationship with main object, see account_type of Account Info
+
+wizard.wizard-step.controls:
+
+Supported field types:
+
+no input: text,image
+
+input:
+textfield - rails text_field
+textarea - rails text_area
+password -  rails password
+select
+checkbox
+radio
+file
+date - rails date 
+calendar - javascript calendar button
+richtext - javascript based control for enter formated text
+actions - links for move to other steps
+
+name: field name in db
+
+user-control.attributes: 
+basically control html attributes as style,class etc. can be defined here, but some controls other params support rails control specific params as date(start_year,end_year,discard_day,discard_month,discard_year,order) and actions 
+
+user-control.value:
+for text is text in this control
+for image is src of image in /public/images
+for other controls is default value
+for select and radio is comma separated list for options
+also select's options can be defined by datasource param where format: {object}.{field for option value}:{field for option text} see country select
+
+Generator XML Specification - Example
+======================================
+
+<?xml version="1.0" encoding="UTF-8"?>
+
+<appdef appname="Test Wizard Application" appdir="wiz">
+<object-list>  
+
+  <object>
+    <classname>User</classname>
+    <classdesc>Account class describes a master user's (admin user) account and its settings</classdesc>
+    <tablename>users</tablename>
+    <relationships>
+      <relationship type="has_many" classname="Project">projects</relationship>
+      <relationship type="has_one" classname="Account">account</relationship>
+    </relationships>
+    <fields>
+      <field name="username" type="string">
+        <params>
+          <param name="limit">100</param>
+        </params>
+      </field>
+      <field name="password" type="string" />
+      <field name="first_name" type="string" />
+      <field name="last_name" type="string"/>
+      <field name="email" type="string" />
+      <field name="dob" type="datetime"/>
+      <field name="bio" type="text"/>
+      <field name="sex" type="string" >Male</field>
+      <field name="avatar" type="string"/>
+      <field name="is_active" type="boolean"/>
+    </fields>
+    <validators>
+      <validator fields="username" type="presence_of">
+        <params>
+          <param name="message">required</param>
+        </params>                
+      </validator>
+      <validator fields="password,first_name,last_name" type="presence_of"></validator>
+      <validator fields="username" type="length_of">
+        <params>
+          <param name="maximum">30</param>
+          <!-- <param name="within">5..30</param> -->
+        </params>        
+      </validator>
+      <validator fields="sex" type="inclusion_of">
+        <params>
+          <param name="in">Male,Female</param>
+        </params>
+      </validator>
+      <validator fields="email" type="format_of_email"></validator>
+      <!-- <validator field="" type="format_of_phone"></validator> -->
+      <!-- <validator fields="number" type="numericality_of"></validator> -->      
+      <!-- <validator field="is_active" type="acceptance_of"></validator> -->
+    </validators>
+    
+  </object>
+  <object>
+    <classname>Account</classname>
+    <tablename>accounts</tablename>
+    <relationships>
+      <relationship type="belongs_to" classname="User">user</relationship>
+    </relationships>
+    <fields>
+      <field name="account_type" type="string" maxlength="10">Standard</field>
+      <field name="membership" type="float"/>
+    </fields>
+    <validators>
+      <validator fields="account_type" type="inclusion_of">
+        <params>
+          <param name="in">Standard,Premium,Free</param>
+        </params>
+      </validator>
+ 
+    </validators>    
+  </object>
+  
+  <object>
+    <classname>Project</classname>
+    <classdesc>Project class</classdesc>
+    <tablename>projects</tablename>
+    <relationships>
+      <relationship type="belongs_to" classname="User">user</relationship>
+    </relationships>
+    <fields>
+      <field name="title" type="string" maxlength="100"/>
+      <field name="descr" type="text"/>
+    </fields>
+  </object>
+
+</object-list>
+
+<!-- Wizards -->
+
+<wizard-list>
+  
+<wizard name="New Account">
+<title>New Account</title>
+<image>new_account.jpg</image>
+<overview>Text describing the purpose of this wizard</overview>
+<steps>
+<wizard-step has-finish-button="false" name="Account Info" object="User">
+  <title>Account info</title>
+  <image>account_info.jpg</image>
+  <help-link>help.html</help-link>
+  <controls>
+    <user-control type="text"><value>Fill user account info</value></user-control>
+    <user-control type="textfield" name="username" label="Username:">
+      <attributes>
+        <attribute name="maxlength">16</attribute>
+        <attribute name="class">red-border</attribute>
+      </attributes>
+    </user-control>
+    <user-control type="password" name="password" label="Password:"></user-control>
+    <user-control type="textfield" name="email" label="Email:"></user-control>
+    <user-control type="select" name="account_type" label="Account type:" object="Account">
+      <value>Standard,Premium,Free</value>
+    </user-control>    
+    <user-control type="checkbox" name="is_active" label="Is active:"><value>true</value></user-control>  
+  </controls>
+</wizard-step>
+
+<wizard-step has-finish-button="true" name="Personal Info" object="User">
+  <title>Personal info</title>
+  <image>personal_info.jpg</image>
+  <controls>
+  <user-control type="text">This text explains to the user what this wizard step is about and what the user is expected to do in this step. This text is shown to the user of the wizard in appropciate "div" tag area.</user-control>
+  <user-control type="textfield" name="first_name" label="First name:">
+    <attributes>
+      <attribute name="maxlength">50</attribute>
+    </attributes>    
+  </user-control>
+  <user-control type="textfield" name="last_name" label="Last name:"></user-control>
+  <user-control type="textarea" name="bio" label="Bio:"></user-control>
+  <user-control type="date" name="dob" label="Dob:"></user-control>
+  <user-control type="radio" name="sex" label="Sex:"><value>Male,Female</value></user-control>
+  <user-control type="file" name="avatar" label="Avatar image:"></user-control>
+  </controls>
+</wizard-step>
+
+<!-- <wizard-step>
+  <title>Choose Project Operation</title>
+  <user-control type="text" name="instructions" userlabel="Instructions:">What do you want to do with your Projects?</user-control>
+  <user-control type="listbox" name="operation" userlabel="Choose one:">"create" => "Create new project", "edit" => "Edit existing project", 
+                                                                        "delete" => "Delete a project"</user-control>
+  <wizard-branch user-control="operation">
+      <case select="create" wizard="create-proj"></case>
+      <case select="edit" wizard="create-proj"></case>    
+      <case select="delete" wizard="create-proj"></case>
+  </wizard-branch>
+</wizard-step> -->
+
+<wizard-step has-finish-button="true" name="Another">
+  <title>Another step</title>
+  <controls>
+    <user-control type="text">Some text</user-control>
+    <user-control type="image">tree.jpg</user-control>
+    <user-control type="actions">
+      <attributes>
+        <attribute name="account_info">First step</attribute>
+        <attribute name="personal_info">Personal Info</attribute>
+      </attributes>
+    </user-control>
+  </controls>
+</wizard-step>
+<wizard-step name="Finish">
+  <title>Finish</title>
+  <controls>
+    <user-control type="text">Some text</user-control>
+  </controls>
+</wizard-step>
+
+</steps>
+<!-- The generated Ror "template" for each wizard contains "Back" and "Next" buttons.
+     A "Cancel" button is provided on each wizard page.
+     An appropriate "Step X of NN" is shown on each wizard page, showing the page "X" that user is currently on out of maximum "NN" wizard pages.
+ -->
+</wizard>
+
+</wizard-list>
+
+<!-- forms are used to edit database table records, or gather user input and then POST to another page to process user input -->
+
+<form-list>
+<form name="User" title="View/Edit User" object="User"> <!-- or url="http://processform.com" -->
+  <controls>  
+  <user-control type="textfield" name="username" label="Username:"/>
+  <user-control type="password" name="password" label="Password:"></user-control>
+  <user-control type="textfield" name="first_name" label="First name:">
+     <attributes>
+       <attribute name="maxlength">50</attribute>
+     </attributes>    
+   </user-control>
+   <user-control type="textfield" name="last_name" label="Last name:"></user-control>
+   <user-control type="textarea" name="bio" label="Bio:"></user-control>
+   <user-control type="date" name="dob" label="Dob:"></user-control>
+   <user-control type="radio" name="sex" label="Sex:"><value>Male,Female</value></user-control> 
+  </controls>  
+</form>
+
+</form-list>
+
+</appdef>
+
+Copyright (c) 2009 ConXentric, Inc., licensed under the GNU GPL License  www.ConXentric.com
+

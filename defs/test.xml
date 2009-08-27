@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<appdef appname="Test Application" appdir="test">
+<object-list>  
+
+  <object>
+    <classname>User</classname>
+    <classdesc>Account class describes a master user's (admin user) account and its settings</classdesc>
+    <tablename>users</tablename>
+    <relationships>
+      <relationship type="has_many" classname="Project">projects</relationship>
+      <relationship type="has_one" classname="Account">account</relationship>
+    </relationships>
+    <fields>
+      <field name="username" type="string">
+        <params>
+          <param name="limit">100</param>
+        </params>
+      </field>
+      <field name="password" type="string" />
+      <field name="first_name" type="string" />
+      <field name="last_name" type="string"/>
+      <field name="email" type="string" />
+      <field name="dob" type="datetime"/>
+      <field name="bio" type="text"/>
+      <field name="country_code" type="string"/>
+      <field name="sex" type="string" >
+        <params>
+          <param name="default">male</param>
+        </params>
+      </field>
+      <field name="avatar" type="string"/>
+      <field name="is_active" type="boolean"/>
+    </fields>
+    <validators>
+      <validator fields="username" type="presence_of">
+        <params>
+          <param name="message">required</param>
+        </params>                
+      </validator>
+      <validator fields="password,first_name,last_name" type="presence_of"></validator>
+      <validator fields="username" type="length_of">
+        <params>
+          <param name="maximum">30</param>
+          <!-- <param name="within">5..30</param> -->
+        </params>        
+      </validator>
+      <validator fields="sex" type="inclusion_of">
+        <params>
+          <param name="in">Male,Female</param>
+        </params>
+      </validator>
+      <validator fields="email" type="format_of_email"></validator>
+      <!-- <validator field="" type="format_of_phone"></validator> -->
+      <!-- <validator fields="number" type="numericality_of"></validator> -->      
+      <!-- <validator field="is_active" type="acceptance_of"></validator> -->
+    </validators>
+    
+  </object>
+  <object>
+    <classname>Account</classname>
+    <tablename>accounts</tablename>
+    <relationships>
+      <relationship type="belongs_to" classname="User">user</relationship>
+    </relationships>
+    <fields>
+      <field name="account_type" type="string">
+        <params>
+          <param name="default">Standard</param>
+        </params>
+      </field>
+      <field name="membership" type="float"/>
+    </fields>
+    <validators>
+      <validator fields="account_type" type="inclusion_of">
+        <params>
+          <param name="in">Standard,Premium,Free</param>
+        </params>
+      </validator> 
+    </validators>    
+  </object>
+  <object>
+    <classname>Country</classname>
+    <tablename>countries</tablename>
+    <fields>
+      <field name="name" type="string"/>
+      <field name="code" type="string"/>
+    </fields>
+    <data>
+      <row>
+        <fields>
+          <field name="code">USA</field>
+          <field name="name">United States</field>
+        </fields>
+      </row> 
+      <row>
+        <fields>
+          <field name="code">GB</field>
+          <field name="name">Great Britain</field>
+        </fields>
+      </row> 
+    </data>    
+  </object>
+    
+  <object>
+    <classname>Project</classname>
+    <classdesc>Project class</classdesc>
+    <tablename>projects</tablename>
+    <relationships>
+      <relationship type="belongs_to" classname="User">user</relationship>
+    </relationships>
+    <fields>
+      <field name="title" type="string" maxlength="100"/>
+      <field name="descr" type="text"/>
+    </fields>
+  </object>
+
+</object-list>
+
+<!-- Wizards -->
+
+<wizard-list>
+  
+<wizard name="New Account">
+<title>New Account</title>
+<image>new_account.jpg</image>
+<overview>Text describing the purpose of this wizard</overview>
+<steps>
+<wizard-step has-finish-button="false" name="Account Info" object="User">
+  <title>Account info</title>
+  <image>account_info.jpg</image>
+  <help-link>help.html</help-link>
+  <controls>
+    <user-control type="text"><value>Fill user account info</value></user-control>
+    <user-control type="textfield" name="username" label="Username:">
+      <attributes>
+        <attribute name="maxlength">16</attribute>
+        <attribute name="class">red-border</attribute>
+      </attributes>
+    </user-control>
+    <user-control type="password" name="password" label="Password:"></user-control>
+    <user-control type="textfield" name="email" label="Email:"></user-control>
+    <user-control type="select" name="account_type" label="Account type:" object="Account">
+      <value>Standard,Premium,Free</value>
+    </user-control>  
+    <user-control type="select" name="country_code" label="Country:" datasource="Country.code:name">
+    </user-control>      
+    <user-control type="checkbox" name="is_active" label="Is active:"><value>true</value></user-control>  
+  </controls>
+</wizard-step>
+
+<wizard-step has-finish-button="true" name="Personal Info" object="User">
+  <title>Personal info</title>
+  <image>personal_info.jpg</image>
+  <controls>
+  <user-control type="text">This text explains to the user what this wizard step is about and what the user is expected to do in this step. This text is shown to the user of the wizard in appropciate "div" tag area.</user-control>
+  <user-control type="textfield" name="first_name" label="First name:">
+    <attributes>
+      <attribute name="maxlength">50</attribute>
+    </attributes>    
+  </user-control>
+  <user-control type="textfield" name="last_name" label="Last name:"></user-control>
+  <user-control type="richtext" name="bio" label="Bio:"></user-control>
+  <user-control type="date" name="dob" label="Dob:"></user-control>
+  <user-control type="radio" name="sex" label="Sex:"><value>Male,Female</value></user-control>
+  <user-control type="file" name="avatar" label="Avatar image:"></user-control>
+  </controls>
+</wizard-step>
+<!-- We need a way to implement basic "branching" within a series of wizards steps.  For example, user chooses an option
+     such as "Create", or "Delete", or "Edit" in one wizard step, then based on that option choice, the wizard flow branches to a different step -->
+<!-- <wizard-step>
+  <title>Choose Project Operation</title>
+  <user-control type="text" name="instructions" userlabel="Instructions:">What do you want to do with your Projects?</user-control>
+  <user-control type="listbox" name="operation" userlabel="Choose one:">"create" => "Create new project", "edit" => "Edit existing project", 
+                                                                        "delete" => "Delete a project"</user-control>
+  <wizard-branch user-control="operation">
+      <case select="create" wizard="create-proj"></case>
+      <case select="edit" wizard="create-proj"></case>    
+      <case select="delete" wizard="create-proj"></case>
+  </wizard-branch>
+</wizard-step> -->
+
+<wizard-step has-finish-button="true" name="Another">
+  <title>Another step</title>
+  <controls>
+    <user-control type="text">Some text</user-control>
+    <user-control type="image">tree.jpg</user-control>
+    <user-control type="actions">
+      <attributes>
+        <attribute name="account_info">First step</attribute>
+        <attribute name="personal_info">Personal Info</attribute>
+      </attributes>
+    </user-control>
+  </controls>
+</wizard-step>
+<wizard-step name="Finish">
+  <title>Finish</title>
+  <controls>
+    <user-control type="text">Some text</user-control>
+  </controls>
+</wizard-step>
+
+</steps>
+<!-- The generated Ror "template" for each wizard page will contain "Back" and "Next" buttons, as appropriate (1st wizard panel, no Back, last one, no Next).
+     A "Cancel" button will be provided by default on each wizard page.
+     An appropriate "Step X of NN" will be shown on each wizard page, showing the page "X" that user is currently on out of maximum "NN" wizard pages.
+ -->
+</wizard>
+
+</wizard-list>
+
+<!-- forms are used to edit database table records, or gather user input and then POST to another page to process user input -->
+
+<form-list>
+<form name="User" title="View/Edit User" object="User"> <!-- or url="http://processform.com" -->
+  <controls>  
+  <user-control type="textfield" name="username" label="Username:"/>
+  <user-control type="password" name="password" label="Password:"></user-control>
+  <user-control type="textfield" name="first_name" label="First name:">
+     <attributes>
+       <attribute name="maxlength">50</attribute>
+     </attributes>    
+   </user-control>
+   <user-control type="textfield" name="last_name" label="Last name:"></user-control>
+   <user-control type="textarea" name="bio" label="Bio:"></user-control>
+   <user-control type="date" name="dob" label="Dob:"></user-control>
+   <user-control type="radio" name="sex" label="Sex:"><value>Male,Female</value></user-control> 
+  </controls>  
+</form>
+
+</form-list>
+
+
+
+<quizzes-list>
+  
+<quiz name="Bio test" show-right-answers="true" min-score="30%">
+<title>Biology course</title>
+<questions>
+<question has-finish-button="false" name="pulse">
+  <title>Pulse</title>
+  <text>What is the pulse rate of an average healthy human being?</text>
+  <right-answer>72 beats per minute</right-answer>
+  <help-link>help.html</help-link>
+  <control type="radio">
+    <value>16 beats per minute,72 beats per minute,100 beats per minute,65 beats per minute</value>
+  </control>
+</question>
+<question has-finish-button="false" name="koala">
+  <title>koala</title>
+  <image>koala.jpg</image>    
+  <text>In which country lives koala?</text>
+  <right-answer>AU</right-answer>
+  <control type="select" datasource="Country.code:name" />
+</question>
+<question has-finish-button="true" name="penguin">
+  <title>Penguin</title>
+  <image>penguin.jpg</image>    
+  <text>In which continents lives penguins?</text>
+  <right-answer>Africa,Antarctica,Australia</right-answer>
+  <control type="checkboxes">
+    <value>Africa,Antarctica,Australia,Europa,Asia</value>
+  </control>
+</question>     
+    
+</questions>
+</quiz>
+
+</quizzes-list>
+
+
+
+</appdef>

@@ -1,0 +1,20 @@
+<h3>Wizards</h3>
+<ul>
+<%@def.wizards.each_with_index do |wiz,index|%>
+<li><%%=link_to '<%=wiz.name%>',:controller=>:wizard_<%=wiz.underscored_name%>%></li>
+<%end%>
+</ul>
+
+<h3>Forms</h3>
+<form>
+<ul>
+<%@def.forms.each_with_index do |form,index|%>
+<li><%=form.title%>: <%%=link_to 'New',:controller=>:form_<%=form.underscored_name%>,:action=>:add%> | Edit: <select onchange="Jump(this)" name="object_<%=form.underscored_name%>">
+  <option value="-1"></option>
+  <%% <%=form.object%>.find(:all).each do |obj|%>
+  <option value="<%%= url_for :controller=>:form_<%=form.underscored_name%>,:action=>:edit,:id=>obj %>"><%%=obj.id%></option>
+  <%% end%>
+  </select></li>
+<%end%>
+</ul>
+</form>
