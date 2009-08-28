@@ -1,23 +1,43 @@
 Rails Wizard Generator
 ======================
+August 2009
 
-The Rails Wizard Generator is a Rails application generator that creates Rails applications based upon an XML application specification.  It can be used to:
+The Rails Wizard Generator is a Rails application generator 
+that creates Rails applications based upon an XML application 
+specification.  
 
- - Generate a functioning Rails application containing user-specified forms and wizards
+It can be used to:
 
- - Generate an integrated set of Rails models, DB schema and controllers (without any wizard or form views), including support for ActiveRecord relationships between objects.
+ - Generate a functioning Rails application containing user-specified 
+   forms and wizards
+
+ - Generate an integrated set of Rails models, DB schema and 
+   controllers (without any wizard or form views), including support 
+   for ActiveRecord relationships between objects.
 
 In particular, the generator creates:
 
- 1) Rails MVC components (models, views and controllers) as an alternative to traditional Rails scaffolding. Unlike Rails scaffolding, it is possible to specify complete objects, along with relationships between multiple objects, and then generate a complete set of Rails MVC framework componentry in a single step.  Each object's attribute (column) can also contain range validation specifications.
+ 1) Rails MVC components (models, views and controllers) as an 
+    alternative to traditional Rails scaffolding. Unlike Rails 
+    scaffolding, it is possible to specify complete objects, along 
+    with relationships between multiple objects, and then generate 
+    a complete set of Rails MVC framework componentry in a single step.  
 
- 2) Wizard views - the generator creates a set of wizards as RHTML view files, and supports a full range of form field types.
+    Each object's attribute (column) can also contain range validation 
+    specifications.
 
- 3) Form views - the generator creates a set of HTML forms as RHTML view files, and supports a full rnage of form field types.
+ 2) Wizard views - the generator creates a set of wizards as RHTML 
+    view files, and supports a full range of form field types.
 
-The generator may also be used simply to generate a complex set of Rails models and controllers, along with an integrated schema.
+ 3) Form views - the generator creates a set of HTML forms as RHTML 
+    view files, and supports a full rnage of form field types.
 
-The generators takes as input an XML-based "specification" file, then generates the Rails application, objects, wizards and forms based upon these specifications.
+The generator may also be used simply to generate a complex set of 
+Rails models and controllers, along with an integrated schema.
+
+The generators takes as input an XML-based "specification" file, 
+then generates the Rails application, objects, wizards and forms 
+based upon these specifications.
 
 
 The following wizard and form fields are supported:
@@ -36,7 +56,9 @@ The following wizard and form fields are supported:
 	actions - links for move to other steps
 
 
-The generated wizard and forms-based application can be customized with your own CSS templates.  The generator uses the Liquid Template engine.
+The generated wizard and forms-based application can be customized 
+with your own CSS templates.  The generator uses the Liquid Template 
+engine.
 
  
 Installation
@@ -48,7 +70,8 @@ $ git clone git://github.com/rbraddy/Rails-Wizard-Generator.git
 
 $ cd generator (directory where generator was installed)
 
-- Edit the config/database.yml to use MySQL or SqlLite (as appropriate for your environment)
+- Edit the config/database.yml to use MySQL or SqlLite 
+  (as appropriate for your environment)
 
 $ cd config
 $ vi database.yml  (use your favorite editor here)
@@ -77,7 +100,9 @@ Your generated application is now located in the directory:
 
 .../generator/output/myapp
 
-Please note that a complete Rails application has been generated, including database schema and live database tables, along with all required Rails MVC framework components for this application.
+Please note that a complete Rails application has been generated, 
+including database schema and live database tables, along with 
+all required Rails MVC framework components for this application.
 
 - Test your newly-generated application
 
@@ -94,61 +119,92 @@ $ ruby script/server    (start up your new Rails application)
 Connect with web browser to your new Rails application
 
 
-The Rails application that is generated can then be further customized in whatever way you choose.  For example, you probably want to add your own CSS style and layout that creates a more appropriate appearance than the generic HTML look of the generated app.
+The Rails application that is generated can then be further 
+customized in whatever way you choose.  For example, you probably 
+want to add your own CSS style and layout that creates a more 
+appropriate appearance than the generic HTML look of the generated app.
 
-You may also use the Rails Wizard Generator to create a holistic set of integrated Rails models and controllers (without the wizard or form views), along with a corresponding database schema that will be incorporated into some other, existing application (vs. using traditional Rails scaffolding).
+You may also use the Rails Wizard Generator to create a holistic 
+set of integrated Rails models and controllers (without the wizard 
+or form views), along with a corresponding database schema that will 
+be incorporated into some other, existing application (vs. using 
+traditional Rails scaffolding).
 
 
 Generator Description and Instructions
 =======================================
 
-To generate project you need create a definition file in /defs directory (see the example test.xml in /defs directory)
+To generate project you need create a definition file in /defs 
+directory (see the example test.xml in /defs directory)
 
-To customize project, create directory in /templates/{appdir} and copy from /templates/app
+To customize project, create directory in /templates/{appdir} and 
+copy from /templates/app
 
 /templates/app/views/controls -> /templates/{appdir}/views/controls
-/templates/app/layouts/application.html.erb -> /templates/{appdir}/views/layouts/application.html.erb
+/templates/app/layouts/application.html.erb 
+  -> /templates/{appdir}/views/layouts/application.html.erb
 
 Place custom images in /templates/{appdir}/images
-create/change css application.css in  /templates/{appdir}/stylesheets/application.css
+create/change css application.css in  
+/templates/{appdir}/stylesheets/application.css
 
 For custom form and wizard templates copy
-/templates/app/views/form.erb.template -> /templates/{appdir}/views/form.erb.template
-/templates/app/views/wizard.erb.template -> /templates/{appdir}/views/wizard.erb.template
+/templates/app/views/form.erb.template 
+  ->  /templates/{appdir}/views/form.erb.template
 
-Template language based on liquid template engine (see http://wiki.github.com/tobi/liquid/liquid-for-designers) 
+/templates/app/views/wizard.erb.template 
+  -> /templates/{appdir}/views/wizard.erb.template
 
-It's a simple template engine for easier template understanding and editing.
+Template language based on liquid template engine 
+(see http://wiki.github.com/tobi/liquid/liquid-for-designers) 
 
-Run generator web application(run: script/server) and when go to http://localhost:3000/ you will see list of current xml definition files or run rake task which generate all projects(run: rake generator:run)
+It's a simple template engine for easier template understanding 
+and editing.
+
+Run generator web application (run: script/server) and then 
+go to http://localhost:3000/  
+
+You will see list of current xml definition files or run rake 
+task which generate all projects (run: rake generator:run)
 
 projects will be generated in output directory
 
-Last step is deploy project to server and after change config.database.yml db data according server db settings, run rake db:migrate for create and populate db tables
+Last step is deploy project to server and after change 
+config.database.yml db data according server db settings, 
+then run rake db:migrate to create and populate db tables
 
 
 Xml definitions:
 =================
 objects.relationships:
-All rails associations supported: belongs_to,has_one,has_many. class attribute is class param for association
+All rails associations supported: belongs_to,has_one,has_many. 
+class attribute is class param for association
 
 objects.fields:
-Name is field name in db and type is any rails migration types(string,text,date,datetime,boolean etc)
+Name is field name in db and type is any rails migration types
+(string,text,date,datetime,boolean etc)
+
 field.params is params for migration, as :limit,:default,:null
 
 objects.validators:
-Type is rails validation method name without validate_ as "presence_of" will generated to "validate_presence_of", also there are addition validations as email format and phone format "format_of_phone","format_of_email"
+Type is rails validation method name without validate_ as 
+"presence_of" will generated to "validate_presence_of", also 
+there are addition validations as email format and phone format 
+"format_of_phone","format_of_email"
 
 Fields is comma separated list of fields for validation
-validator.params: some rails validation methods required additional params as maximum or within for validate_length_of
+validator.params: some rails validation methods required 
+additional params as maximum or within for validate_length_of
 
 objects.data:
-If predefined data required for some objects then it can be defined in data, see object Country definition
+If predefined data is required for some objects then it can be 
+defined in data, see object Country definition as an example
 
 wizard.wizard-step
 Name is name of step(required)
 object defines which object will be used in form(form_for rails)
-object can be overwriten for control by object which in relationship with main object, see account_type of Account Info
+object can be overwriten for control by object which in 
+relationship with main object, see account_type of Account Info
 
 wizard.wizard-step.controls:
 
@@ -157,32 +213,47 @@ Supported field types:
 no input: text,image
 
 input:
-textfield - rails text_field
-textarea - rails text_area
-password -  rails password
-select
-checkbox
-radio
-file
-date - rails date 
-calendar - javascript calendar button
-richtext - javascript based control for enter formated text
-actions - links for move to other steps
+  textfield - rails text_field
+  textarea - rails text_area
+  password -  rails password
+  select
+  checkbox
+  radio
+  file
+  date - rails date 
+  calendar - javascript calendar button
+  richtext - javascript based control for enter formated text
+  actions - links for move to other steps
 
 name: field name in db
 
 user-control.attributes: 
-basically control html attributes as style,class etc. can be defined here, but some controls other params support rails control specific params as date(start_year,end_year,discard_day,discard_month,discard_year,order) and actions 
+Basically control html attributes as style,class etc. can be 
+defined here, but some controls other params support rails control 
+specific params as date (start_year, end_year, discard_day, 
+discard_month,discard_year,order) and actions 
 
 user-control.value:
 for text is text in this control
 for image is src of image in /public/images
 for other controls is default value
 for select and radio is comma separated list for options
-also select's options can be defined by datasource param where format: {object}.{field for option value}:{field for option text} see country select
+also select's options can be defined by datasource param where format: 
+
+{object}.{field for option value}:{field for option text} 
+see country select for example
+
 
 Generator XML Specification - Example
 ======================================
+
+Applications are specified with an XML file definition, making it easy
+to see all of your application objects, relationships, wizard and form
+definitions together (you can easily print the XML file out to desk
+review it before generating your app).
+
+The following is an example of a relatively simple application spec:
+
 
 <?xml version="1.0" encoding="UTF-8"?>
 
@@ -238,6 +309,7 @@ Generator XML Specification - Example
     </validators>
     
   </object>
+
   <object>
     <classname>Account</classname>
     <tablename>accounts</tablename>
@@ -272,6 +344,7 @@ Generator XML Specification - Example
   </object>
 
 </object-list>
+
 
 <!-- Wizards -->
 
@@ -384,6 +457,8 @@ Generator XML Specification - Example
 </form-list>
 
 </appdef>
+
+
 
 Copyright (c) 2009 ConXentric, Inc., licensed under the GNU GPL License  www.ConXentric.com
 
