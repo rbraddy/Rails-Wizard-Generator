@@ -75,6 +75,8 @@ $ cd generator (directory where generator was installed)
 
 $ cd config
 $ vi database.yml  (use your favorite editor here)
+$ rake db:create
+$ rake db:migrate
 $ rake gems:install
 
 - Create your application's XML specification
