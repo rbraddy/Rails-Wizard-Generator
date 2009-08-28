@@ -64,20 +64,20 @@ class Generator
     cp_r @source_dir, @target_dir
     FileUtils.rm_rf "#{@target_dir}/public/images/.svn"
     FileUtils.rm_rf "#{@target_dir}/public/stylesheets/.svn"
-    if File.exist? source_site_dir
+    if File.exist? @source_site_dir
       cp_r "#{@source_site_dir}/images/", "#{@target_dir}/public/"
       cp_r "#{@source_site_dir}/stylesheets", "#{@target_dir}/public/"    
     end
     
     FileUtils.rm_rf "#{@target_dir}/app/views/layouts/.svn"
     FileUtils.rm_rf "#{@target_dir}/app/views/controls/.svn"
-    if File.exist? source_site_dir
+    if File.exist? @source_site_dir
       cp_r "#{@source_site_dir}/views/layouts", "#{@target_dir}/app/views/"
       cp_r "#{@source_site_dir}/views/controls", "#{@target_dir}/app/views/"    
     end
     p "delete templates"
     File.delete "#{@target_dir}/app/views/form.erb.template"
-    File.delete "#{@target_dir}/app/views/form.erb.template_old"
+    # File.delete "#{@target_dir}/app/views/form.erb.template_old"
     File.delete "#{@target_dir}/app/views/wizard.erb.template"
     File.delete "#{@target_dir}/app/controllers/wizard_controller.rb.template"
     File.delete "#{@target_dir}/app/controllers/form_controller.rb.template"

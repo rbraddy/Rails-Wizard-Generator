@@ -9,7 +9,7 @@
   <br/><a href="/{{ step.help_link }}" target="blank">help</a>
 {% endif %}
 {% if step.object %}
-<%remote_form_for @{{ step.underscored_object }}, :url=>{:action=>"{{ step.underscored_name }}"},:html=>{:multipart => true} do |form| %>
+<%form_for @{{ step.underscored_object }}, :url=>{:action=>"{{ step.underscored_name }}"},:html=>{:multipart => true} do |form| %>
 <!-- errors -->
 <%= form.error_messages %>
 <!-- /errors -->
