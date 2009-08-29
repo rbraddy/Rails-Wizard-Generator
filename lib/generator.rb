@@ -11,9 +11,9 @@ class Generator
   include FileUtils
 
   def initialize app_def
-    @source_dir = "#{RAILS_ROOT}/templates/app"
-    @source_site_dir = "#{RAILS_ROOT}/templates/sites/#{app_def.name}"
-    @target_dir = "#{RAILS_ROOT}/output/#{app_def.name}"
+    @source_dir = File.join(RAILS_ROOT,"templates","app")
+    @source_site_dir = File.join(RAILS_ROOT,"templates","sites",app_def.name)
+    @target_dir = File.join(RAILS_ROOT,"output",app_def.name)
     @def = app_def
     p "CREATING FILE STRUCTURE...."
     prepare_structure
@@ -21,8 +21,8 @@ class Generator
 
   def generate_models
     @def.objects.each do |obj|
-      data = ERB.new(File.read("#{@source_dir}/app/models/model.rb.template")).result(binding)
-      path = File.join("#{@target_dir}/app/models/", "#{obj.class_name.downcase}.rb")
+      data = ERB.new(File.read(File.join(@source_dir,"app","models","model.rb.template"))).result(binding)
+      path = File.join(@target_dir,"app","models", "#{obj.class_name.downcase}.rb")
       File.open(path, "wb"){ |f| f.write(data) }
       # p "data=#{data}"
       # file = File.new("#{@target_dir}/app/models/#{obj.class_name.downcase}.rb",  "w+")
@@ -34,8 +34,8 @@ class Generator
   def generate_migration
     i = 2;
     @def.objects.each do |obj|
-      data = ERB.new(File.read("#{@source_dir}/db/migrate/migration.rb.template")).result(binding)
-      path = File.join("#{@target_dir}/db/migrate/", "#{'%.3d' % i}_create_#{obj.class_name.tableize}.rb")
+      data = ERB.new(File.read(File.join(@source_dir,"db","migrate","migration.rb.template"))).result(binding)
+      path = File.join(@target_dir,"db","migrate", "#{'%.3d' % i}_create_#{obj.class_name.tableize}.rb")
       File.open(path, "wb"){ |f| f.write(data) }
       # p "data=#{data}"
       # file = File.new("#{@target_dir}/db/migrate/#{'%.3d' % i}_create_#{obj.class_name.tableize}.rb",  "w+")
@@ -72,8 +72,8 @@ class Generator
     FileUtils.rm_rf "#{@target_dir}/app/views/layouts/.svn"
     FileUtils.rm_rf "#{@target_dir}/app/views/controls/.svn"
     if File.exist? @source_site_dir
-      cp_r "#{@source_site_dir}/views/layouts", "#{@target_dir}/app/views/"
-      cp_r "#{@source_site_dir}/views/controls", "#{@target_dir}/app/views/"    
+      cp_r "#{@source_site_dir}/views/layouts/", "#{@target_dir}/app/views/"
+      cp_r "#{@source_site_dir}/views/controls/", "#{@target_dir}/app/views/"    
     end
     p "delete templates"
     File.delete "#{@target_dir}/app/views/form.erb.template"
