@@ -65,15 +65,15 @@ class Generator
     FileUtils.rm_rf "#{@target_dir}/public/images/.svn"
     FileUtils.rm_rf "#{@target_dir}/public/stylesheets/.svn"
     if File.exist? @source_site_dir
-      cp_r "#{@source_site_dir}/images/", "#{@target_dir}/public/"
-      cp_r "#{@source_site_dir}/stylesheets", "#{@target_dir}/public/"    
+      cp_r("#{@source_site_dir}/images/", "#{@target_dir}/public/") if File.exist?("#{@source_site_dir}/images")
+      cp_r("#{@source_site_dir}/stylesheets", "#{@target_dir}/public/") if File.exist?("#{@source_site_dir}/stylesheets")   
     end
     
     FileUtils.rm_rf "#{@target_dir}/app/views/layouts/.svn"
     FileUtils.rm_rf "#{@target_dir}/app/views/controls/.svn"
     if File.exist? @source_site_dir
-      cp_r "#{@source_site_dir}/views/layouts/", "#{@target_dir}/app/views/"
-      cp_r "#{@source_site_dir}/views/controls/", "#{@target_dir}/app/views/"    
+      cp_r("#{@source_site_dir}/views/layouts/", "#{@target_dir}/app/views/") if File.exist?("#{@source_site_dir}/views/layouts")
+      cp_r("#{@source_site_dir}/views/controls/", "#{@target_dir}/app/views/") if File.exist?("#{@source_site_dir}/views/controls")   
     end
     p "delete templates"
     File.delete "#{@target_dir}/app/views/form.erb.template"
