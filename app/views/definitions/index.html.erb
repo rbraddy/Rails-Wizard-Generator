@@ -3,8 +3,8 @@
   <tr><th>File</th><th></th></tr>
 
     <% for file in @xmls %>
-  <tr><td><%=file.delete('.xml')%></td><td>
-  <span id="link_<%=file.delete('.xml').parameterize-%>"><%=link_to('generate', {:controller=>'definitions',:action=>'generate',:id=>file.delete('.xml')}, {:onclick=>"progress('link_#{file.delete('.xml').parameterize}')"})%></td></tr>      
+  <tr><td><%=file.gsub(".xml", "")%></td><td>
+  <span id="link_<%=file.delete('.xml').parameterize-%>"><%=link_to('generate', {:controller=>'definitions',:action=>'generate',:id=>file.gsub(".xml", "")}, {:onclick=>"progress('link_#{file.delete('.xml').parameterize}')"})%></td></tr>      
     <% end %>
   
 

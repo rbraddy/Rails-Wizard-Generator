@@ -72,8 +72,8 @@ class Generator
     FileUtils.rm_rf "#{@target_dir}/app/views/layouts/.svn"
     FileUtils.rm_rf "#{@target_dir}/app/views/controls/.svn"
     if File.exist? @source_site_dir
-      cp_r("#{@source_site_dir}/views/layouts/", "#{@target_dir}/app/views/") if File.exist?("#{@source_site_dir}/views/layouts")
-      cp_r("#{@source_site_dir}/views/controls/", "#{@target_dir}/app/views/") if File.exist?("#{@source_site_dir}/views/controls")   
+      cp_r("#{@source_site_dir}/views/layouts", "#{@target_dir}/app/views/") if File.exist?("#{@source_site_dir}/views/layouts")
+      cp_r("#{@source_site_dir}/views/controls", "#{@target_dir}/app/views/") if File.exist?("#{@source_site_dir}/views/controls")   
     end
     p "delete templates"
     File.delete "#{@target_dir}/app/views/form.erb.template"
