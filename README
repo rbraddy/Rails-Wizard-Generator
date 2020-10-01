@@ -61,10 +61,10 @@ with your own CSS templates.  The generator uses the Liquid Template
 engine.
 
  
-Installation
-============
+Installations
+=============
  
-- Copy this application to your Rails development environment
+- Copy this application to your Rails development environment.
 
 $ git clone git://github.com/rbraddy/Rails-Wizard-Generator.git
 
@@ -121,9 +121,8 @@ $ ruby script/server    (start up your new Rails application)
 Connect with web browser to your new Rails application
 
 
-The Rails application that is generated can then be further 
-customized in whatever way you choose.  For example, you probably 
-want to add your own CSS style and layout that creates a more 
+The Rails application that is generated can then be further customized in whatever way you choose. 
+For example, you probably want to add your own CSS style and layout that creates a more 
 appropriate appearance than the generic HTML look of the generated app.
 
 You may also use the Rails Wizard Generator to create a holistic 
